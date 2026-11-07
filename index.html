@@ -37,21 +37,21 @@
 <main>
   <div class="section-head"><div><h2>Global overview</h2><p>Live information from public data providers. Some feeds may be delayed or temporarily unavailable.</p></div><span class="pill">Local time: Santo Domingo</span></div>
   <section class="grid">
-    <article class="card span-4" id="weatherCard">
+    <article class="card span-4" id="weatherCard" data-widget="weather">
       <div class="card-title"><h3>☀️ Weather · Santo Domingo</h3><span class="eyebrow">OPEN-METEO</span></div>
       <div class="weather-main"><div class="weather-icon" id="weatherIcon">🌤️</div><div><div class="metric"><span class="big" id="temperature">--°</span><span class="muted" id="weatherCondition">Loading…</span></div><div class="small">Santo Domingo, Dominican Republic</div></div></div>
       <div class="weather-meta"><div class="mini"><span>Feels like</span><strong id="feels">--°</strong></div><div class="mini"><span>Humidity</span><strong id="humidity">--%</strong></div><div class="mini"><span>Wind</span><strong id="wind">-- km/h</strong></div><div class="mini"><span>UV index</span><strong id="uv">--</strong></div></div>
       <div class="status" id="weatherStatus">Connecting to weather feed…</div>
     </article>
-    <article class="card span-4">
+    <article class="card span-4" data-widget="crypto">
       <div class="card-title"><h3>₿ Crypto snapshot</h3><span class="eyebrow">COINCAP</span></div>
       <div class="coin-list" id="cryptoList"><div class="muted">Loading market data…</div></div><div class="status" id="cryptoStatus">Prices shown in USD</div>
     </article>
-    <article class="card span-4">
+    <article class="card span-4" data-widget="world_clocks">
       <div class="card-title"><h3>🌐 World clocks</h3><span class="eyebrow">LIVE TIME</span></div>
       <div class="clock-list" id="clocks"></div>
     </article>
-    <article class="card span-5">
+    <article class="card span-5" data-widget="currency">
       <div class="card-title"><h3>💱 Currency converter</h3><span class="eyebrow">EXCHANGE RATES</span></div>
       <div class="converter">
         <div class="field"><label for="amount">Amount</label><input id="amount" type="number" min="0" step="any" value="1"></div>
@@ -61,17 +61,17 @@
       <div style="margin-top:14px"><div class="eyebrow">CONVERTED AMOUNT</div><div class="big" id="converted">Loading…</div><div class="small" id="rateInfo">Rates provided by open.er-api.com</div></div>
       <div class="status" id="currencyStatus">Fetching exchange rates…</div>
     </article>
-    <article class="card span-7">
+    <article class="card span-7" data-widget="markets">
       <div class="card-title"><h3>📊 Global market watch</h3><span class="eyebrow">TRADINGVIEW</span></div>
       <iframe title="Global market overview chart" loading="lazy" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_market&symbol=SP%3ASPX&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=%230d1d30&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies=[]&locale=en"></iframe>
       <div class="chart-links"><a href="https://www.tradingview.com/symbols/INDEX-SPX/" target="_blank" rel="noopener">S&P 500 ↗</a><a href="https://www.tradingview.com/symbols/NASDAQ-NDX/" target="_blank" rel="noopener">Nasdaq 100 ↗</a><a href="https://www.tradingview.com/symbols/DJ-DJI/" target="_blank" rel="noopener">Dow Jones ↗</a><a href="https://www.tradingview.com/symbols/TVC-GOLD/" target="_blank" rel="noopener">Gold ↗</a><a href="https://www.tradingview.com/symbols/TVC-SILVER/" target="_blank" rel="noopener">Silver ↗</a></div>
     </article>
-    <article class="card span-6">
+    <article class="card span-6" data-widget="oil">
       <div class="card-title"><h3>🛢️ Oil markets · Brent crude</h3><span class="eyebrow">TRADINGVIEW</span></div>
       <iframe title="Brent crude oil chart" loading="lazy" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_oil&symbol=TVC%3AUKOIL&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=%230d1d30&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies=[]&locale=en"></iframe>
       <div class="chart-links"><a href="https://www.tradingview.com/symbols/TVC-UKOIL/" target="_blank" rel="noopener">Brent crude ↗</a><a href="https://www.tradingview.com/symbols/TVC-USOIL/" target="_blank" rel="noopener">WTI crude ↗</a></div>
     </article>
-    <article class="card span-6">
+    <article class="card span-6" data-widget="news">
       <div class="card-title"><h3>📰 News & discovery</h3><span class="eyebrow">EXTERNAL SOURCES</span></div>
       <div class="news-list">
         <div class="news-item"><a href="https://www.reuters.com/world/" target="_blank" rel="noopener">Reuters · World news</a><span>Global</span></div>
@@ -81,24 +81,80 @@
       </div>
       <p class="small">Open a source to read its latest reporting. Headlines are not republished in this dashboard.</p>
     </article>
-    <article class="card span-6">
+    <article class="card span-6" data-widget="games">
       <div class="card-title"><h3>🎯 Number challenge</h3><span class="eyebrow">MINI GAME</span></div>
       <div class="gamebox"><p>Guess the number from 1 to 20. You have five tries.</p><div class="game-row"><input id="guessInput" type="number" min="1" max="20" placeholder="Your guess"><button id="guessBtn">Guess</button><button id="newGameBtn">New game</button></div><div class="result" id="gameResult" aria-live="polite">Good luck!</div></div>
     </article>
-    <article class="card span-6">
+    <article class="card span-6" data-widget="games">
       <div class="card-title"><h3>🧠 Quick trivia</h3><span class="eyebrow">KNOW YOUR WORLD</span></div>
       <div class="gamebox"><p id="triviaQuestion">Which ocean is the largest on Earth?</p><div class="game-row"><button class="trivia-answer">Atlantic</button><button class="trivia-answer">Pacific</button><button class="trivia-answer">Indian</button></div><div class="result" id="triviaResult" aria-live="polite">Choose an answer.</div><button id="nextTrivia" style="margin-top:8px">Next question</button></div>
     </article>
-    <article class="card span-12">
+    <article class="card span-12" data-widget="games">
       <div class="card-title"><h3>✨ Daily fact</h3><span class="eyebrow">A LITTLE CURIOSITY</span></div>
       <div class="fact" id="dailyFact">The Pacific Ocean is the largest and deepest ocean on Earth.</div>
     </article>
   </section>
 </main>
 <footer><span>Global Pulse · Independent information dashboard</span><span>Data may be delayed, estimated, or unavailable. Not financial advice.</span></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const SUPABASE_URL = "https://qcxtmikgimqprgszemvl.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Gp6CUo9qHF9cWKb7L2TAJg_VGk_rBL_";
+  const supabaseClient = window.supabase?.createClient
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+    : null;
+
   const $ = id => document.getElementById(id);
   const fmt = (n,d=2) => Number(n).toLocaleString(undefined,{maximumFractionDigits:d});
+
+  const DEFAULT_REFRESH_INTERVALS = { weather: 300, crypto: 300, currency: 1800 };
+  let refreshIntervals = { ...DEFAULT_REFRESH_INTERVALS };
+
+  function applyWidgetSettings(settings) {
+    if (!settings || typeof settings !== 'object') return;
+    document.querySelectorAll('[data-widget]').forEach(card => {
+      const enabled = settings[card.dataset.widget];
+      if (typeof enabled === 'boolean') card.hidden = !enabled;
+    });
+  }
+
+  function applyRefreshSettings(settings) {
+    if (!settings || typeof settings !== 'object') return;
+    for (const key of Object.keys(DEFAULT_REFRESH_INTERVALS)) {
+      const seconds = Number(settings[key]);
+      if (Number.isFinite(seconds) && seconds >= 30 && seconds <= 86400) {
+        refreshIntervals[key] = seconds;
+      }
+    }
+  }
+
+  async function loadDashboardSettings() {
+    if (!supabaseClient) {
+      console.warn('Supabase SDK unavailable; using default dashboard settings.');
+      return;
+    }
+    try {
+      const { data, error } = await supabaseClient
+        .from('dashboard_settings')
+        .select('setting_key, setting_value')
+        .in('setting_key', ['widgets', 'refresh_intervals']);
+      if (error) throw error;
+      for (const row of data || []) {
+        if (row.setting_key === 'widgets') applyWidgetSettings(row.setting_value);
+        if (row.setting_key === 'refresh_intervals') applyRefreshSettings(row.setting_value);
+      }
+      console.info('Global Pulse settings loaded from Supabase.');
+    } catch (error) {
+      console.warn('Unable to load Supabase settings; using defaults.', error);
+    }
+  }
+
+  function startDataRefreshTimers() {
+    setInterval(loadWeather, refreshIntervals.weather * 1000);
+    setInterval(loadCrypto, refreshIntervals.crypto * 1000);
+    setInterval(loadRates, refreshIntervals.currency * 1000);
+  }
+
   async function loadWeather(){
     const url='https://api.open-meteo.com/v1/forecast?latitude=18.4861&longitude=-69.9312&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&hourly=uv_index&timezone=America%2FSanto_Domingo';
     try{
@@ -129,7 +185,14 @@
   function updateClocks(){$('clocks').innerHTML=zones.map(([city,zone])=>`<div class="clock"><div class="city">${city}</div><div class="time">${new Intl.DateTimeFormat('en-US',{timeZone:zone,hour:'2-digit',minute:'2-digit',hour12:true}).format(new Date())}</div><div class="small">${new Intl.DateTimeFormat('en-US',{timeZone:zone,weekday:'short'}).format(new Date())}</div></div>`).join('')}
   function refreshAll(){$('refreshBtn').disabled=true;$('refreshBtn').textContent='Refreshing…';Promise.allSettled([loadWeather(),loadCrypto(),loadRates()]).finally(()=>{$('lastUpdated').textContent='Last refresh: '+new Date().toLocaleTimeString();$('refreshBtn').disabled=false;$('refreshBtn').textContent='↻ Refresh data'})}
   $('refreshBtn').addEventListener('click',refreshAll);$('amount').addEventListener('input',convert);$('fromCurrency').addEventListener('change',convert);$('toCurrency').addEventListener('change',convert);
-  updateClocks();setInterval(updateClocks,1000);refreshAll();setInterval(()=>Promise.allSettled([loadWeather(),loadCrypto()]),5*60*1000);setInterval(loadRates,30*60*1000);
+  updateClocks();
+  setInterval(updateClocks,1000);
+  async function initializeDashboard() {
+    await loadDashboardSettings();
+    refreshAll();
+    startDataRefreshTimers();
+  }
+  initializeDashboard();
   let secret=Math.floor(Math.random()*20)+1,tries=5;
   $('guessBtn').onclick=()=>{const n=Number($('guessInput').value);if(!Number.isInteger(n)||n<1||n>20){$('gameResult').textContent='Enter a whole number from 1 to 20.';return}if(tries<=0)return;tries--;if(n===secret){$('gameResult').textContent='Correct! You got it.';tries=0}else if(tries===0){$('gameResult').textContent='Out of tries. The number was '+secret+'.'}else{$('gameResult').textContent=(n<secret?'Try higher. ':'Try lower. ')+tries+' tries left.'}};
   $('newGameBtn').onclick=()=>{secret=Math.floor(Math.random()*20)+1;tries=5;$('guessInput').value='';$('gameResult').textContent='New round — five tries. Good luck!'};
