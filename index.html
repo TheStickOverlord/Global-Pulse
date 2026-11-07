@@ -25,15 +25,59 @@
     iframe{width:100%;height:310px;border:0;border-radius:12px;background:#081827}.chart-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chart-links a{font-size:12px;color:var(--cyan);text-decoration:none}
     footer{border-top:1px solid var(--line);padding:18px clamp(16px,4vw,48px);color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
     .status{font-size:11px;color:var(--muted)}.error{color:var(--red)}.fact{font-size:15px;line-height:1.65}
+
+    .admin-overlay{position:fixed;inset:0;z-index:1000;background:#020914d9;display:none;align-items:center;justify-content:center;padding:18px;overflow:auto}
+    .admin-overlay.open{display:flex}
+    .admin-panel{width:min(620px,100%);max-height:92vh;overflow:auto;background:#0d1d30;border:1px solid #35d6e8;border-radius:18px;padding:22px;box-shadow:0 24px 80px #0009}
+    .admin-panel h2{margin:0 0 6px;font-size:20px}.admin-panel p{color:var(--muted);font-size:13px}
+    .admin-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .admin-fields{display:grid;gap:12px}.admin-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+    .admin-row label{font-size:14px}.admin-row input[type=number]{width:110px;background:#081827;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px}
+    .admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.admin-status{min-height:20px;font-size:12px;color:var(--cyan);margin-top:10px}
+    .admin-login{display:grid;gap:10px}.admin-login input{width:100%;background:#081827;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:11px;font:inherit}
+    .admin-note{font-size:11px;color:var(--muted)}
+
     @media(max-width:1050px){.span-3,.span-4{grid-column:span 6}.span-5,.span-7,.span-8{grid-column:span 12}}
     @media(max-width:650px){header{align-items:flex-start}.head-right{width:100%;justify-content:space-between}.span-3,.span-4,.span-5,.span-6,.span-7,.span-8{grid-column:span 12}.clock-list{grid-template-columns:repeat(2,1fr)}iframe{height:260px}.converter{grid-template-columns:1fr}.swap{display:none}}
   </style>
 </head>
 <body>
 <header>
-  <div class="brand"><div class="logo">GP</div><div><h1>Global Pulse</h1><div class="sub">Your snapshot of a connected world</div></div></div>
+  <div class="brand"><div class="logo" id="secretAdminTrigger" title="">GP</div><div><h1>Global Pulse</h1><div class="sub">Your snapshot of a connected world</div></div></div>
   <div class="head-right"><span class="live">LIVE DASHBOARD</span><span class="small" id="lastUpdated">Waiting for first refresh…</span><button class="primary" id="refreshBtn">↻ Refresh data</button></div>
 </header>
+
+<div class="admin-overlay" id="adminOverlay" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+  <div class="admin-panel">
+    <div class="admin-top">
+      <div><h2 id="adminTitle">Global Pulse Admin</h2><div class="small">Private dashboard controls</div></div>
+      <button type="button" id="closeAdminBtn" aria-label="Close admin panel">✕</button>
+    </div>
+    <div id="adminLogin" class="admin-login">
+      <p>Sign in with your authorized Supabase administrator account.</p>
+      <label class="small" for="adminEmail">Email</label>
+      <input id="adminEmail" type="email" autocomplete="username" placeholder="Admin email">
+      <label class="small" for="adminPassword">Password</label>
+      <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Password">
+      <div class="admin-actions"><button class="primary" type="button" id="adminLoginBtn">Sign in</button></div>
+      <div class="admin-note">Access is checked against the admin_users table. No password is stored in this page.</div>
+    </div>
+    <div id="adminControls" hidden>
+      <p>Choose which dashboard sections are visible and set automatic refresh intervals.</p>
+      <div class="admin-fields">
+        <strong>Visible sections</strong>
+        <div id="adminWidgetControls"></div>
+        <strong>Refresh intervals (seconds)</strong>
+        <div id="adminIntervalControls"></div>
+      </div>
+      <div class="admin-actions">
+        <button class="primary" type="button" id="saveAdminBtn">Save settings</button>
+        <button type="button" id="adminLogoutBtn">Sign out</button>
+      </div>
+    </div>
+    <div class="admin-status" id="adminStatus" role="status" aria-live="polite"></div>
+  </div>
+</div>
 <main>
   <div class="section-head"><div><h2>Global overview</h2><p>Live information from public data providers. Some feeds may be delayed or temporarily unavailable.</p></div><span class="pill">Local time: Santo Domingo</span></div>
   <section class="grid">
@@ -201,6 +245,139 @@
   $('nextTrivia').onclick=()=>{q=(q+1)%trivia.length;showTrivia()};showTrivia();
   const facts=['The Pacific Ocean is the largest and deepest ocean on Earth.','A day on Venus is longer than its year.','The Earth’s atmosphere is mostly nitrogen.','The Great Barrier Reef is the world’s largest coral reef system.','Light from the Sun takes about eight minutes to reach Earth.'];
   const day=Math.floor(Date.now()/86400000);$('dailyFact').textContent=facts[day%facts.length];
+
+  // Secret admin access: click the GP logo five times to reveal the sign-in panel.
+  const adminOverlay = $('adminOverlay');
+  const adminStatus = $('adminStatus');
+  let logoClickCount = 0;
+  let logoClickTimer = null;
+  $('secretAdminTrigger').addEventListener('click', () => {
+    logoClickCount++;
+    clearTimeout(logoClickTimer);
+    logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1800);
+    if (logoClickCount >= 5) {
+      logoClickCount = 0;
+      adminOverlay.classList.add('open');
+      adminStatus.textContent = '';
+      $('adminEmail').focus();
+    }
+  });
+  $('closeAdminBtn').addEventListener('click', () => adminOverlay.classList.remove('open'));
+  adminOverlay.addEventListener('click', event => {
+    if (event.target === adminOverlay) adminOverlay.classList.remove('open');
+  });
+
+  const widgetLabels = {
+    weather: 'Weather', crypto: 'Crypto snapshot', world_clocks: 'World clocks',
+    currency: 'Currency converter', markets: 'Global market watch',
+    oil: 'Oil markets', news: 'News & discovery', games: 'Games and daily fact'
+  };
+  const adminWidgetKeys = Object.keys(widgetLabels);
+
+  function renderAdminControls(widgetSettings, intervalSettings) {
+    $('adminWidgetControls').innerHTML = adminWidgetKeys.map(key => `
+      <div class="admin-row">
+        <label for="admin-widget-${key}">${widgetLabels[key]}</label>
+        <input type="checkbox" id="admin-widget-${key}" data-admin-widget="${key}" ${widgetSettings?.[key] !== false ? 'checked' : ''}>
+      </div>`).join('');
+    $('adminIntervalControls').innerHTML = ['weather','crypto','currency'].map(key => `
+      <div class="admin-row">
+        <label for="admin-interval-${key}">${key[0].toUpperCase()+key.slice(1)}</label>
+        <input type="number" id="admin-interval-${key}" data-admin-interval="${key}" min="30" max="86400" step="30" value="${Number(intervalSettings?.[key] ?? DEFAULT_REFRESH_INTERVALS[key])}">
+      </div>`).join('');
+  }
+
+  async function loadAdminControls() {
+    const { data, error } = await supabaseClient
+      .from('dashboard_settings')
+      .select('setting_key, setting_value')
+      .in('setting_key', ['widgets', 'refresh_intervals']);
+    if (error) throw error;
+    const settings = Object.fromEntries((data || []).map(row => [row.setting_key, row.setting_value]));
+    renderAdminControls(settings.widgets || {}, settings.refresh_intervals || DEFAULT_REFRESH_INTERVALS);
+  }
+
+  $('adminLoginBtn').addEventListener('click', async () => {
+    if (!supabaseClient) {
+      adminStatus.textContent = 'Supabase is unavailable. Please try again later.';
+      return;
+    }
+    const email = $('adminEmail').value.trim();
+    const password = $('adminPassword').value;
+    if (!email || !password) {
+      adminStatus.textContent = 'Enter your admin email and password.';
+      return;
+    }
+    $('adminLoginBtn').disabled = true;
+    adminStatus.textContent = 'Signing in…';
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      const userId = data.user?.id;
+      const { data: adminRecord, error: adminError } = await supabaseClient
+        .from('admin_users').select('user_id').eq('user_id', userId).maybeSingle();
+      if (adminError) throw adminError;
+      if (!adminRecord) {
+        await supabaseClient.auth.signOut();
+        throw new Error('This account is not listed as an administrator.');
+      }
+      $('adminLogin').hidden = true;
+      $('adminControls').hidden = false;
+      await loadAdminControls();
+      adminStatus.textContent = 'Signed in. You can now manage dashboard settings.';
+    } catch (error) {
+      adminStatus.textContent = error.message || 'Sign-in failed. Check your credentials and try again.';
+    } finally {
+      $('adminLoginBtn').disabled = false;
+    }
+  });
+
+  $('saveAdminBtn').addEventListener('click', async () => {
+    try {
+      const widgets = {};
+      document.querySelectorAll('[data-admin-widget]').forEach(input => {
+        widgets[input.dataset.adminWidget] = input.checked;
+      });
+      const intervals = {};
+      document.querySelectorAll('[data-admin-interval]').forEach(input => {
+        const seconds = Number(input.value);
+        if (!Number.isInteger(seconds) || seconds < 30 || seconds > 86400) {
+          throw new Error('Refresh intervals must be whole seconds between 30 and 86400.');
+        }
+        intervals[input.dataset.adminInterval] = seconds;
+      });
+      $('saveAdminBtn').disabled = true;
+      adminStatus.textContent = 'Saving settings…';
+      const updates = [
+        supabaseClient.from('dashboard_settings').update({ setting_value: widgets, updated_at: new Date().toISOString() }).eq('setting_key', 'widgets'),
+        supabaseClient.from('dashboard_settings').update({ setting_value: intervals, updated_at: new Date().toISOString() }).eq('setting_key', 'refresh_intervals')
+      ];
+      const results = await Promise.all(updates);
+      const failed = results.find(result => result.error);
+      if (failed) throw failed.error;
+      applyWidgetSettings(widgets);
+      applyRefreshSettings(intervals);
+      adminStatus.textContent = 'Saved! Reload the page to apply the new refresh intervals.';
+    } catch (error) {
+      adminStatus.textContent = error.message || 'Could not save settings.';
+    } finally {
+      $('saveAdminBtn').disabled = false;
+    }
+  });
+
+  $('adminLogoutBtn').addEventListener('click', async () => {
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
+      $('adminControls').hidden = true;
+      $('adminLogin').hidden = false;
+      $('adminPassword').value = '';
+      adminStatus.textContent = 'Signed out.';
+    } catch (error) {
+      adminStatus.textContent = error.message || 'Sign-out failed.';
+    }
+  });
+
 </script>
 </body>
 </html>
